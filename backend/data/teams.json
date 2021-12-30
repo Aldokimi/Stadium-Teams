@@ -1,0 +1,50 @@
+{
+    "1": {
+        "id": "1",
+        "name": "FCBarcelona",
+        "city": "Barcelona",
+        "logo": ".\/res\/fcb.png"
+    },
+    "2": {
+        "id": "2",
+        "name": "Paris Saint-Germain",
+        "city": "Paris",
+        "logo": ".\/res\/psg.png"
+    },
+    "3": {
+        "id": "3",
+        "name": "Bayern Munich",
+        "city": "Munich",
+        "logo": ".\/res\/bayern.png"
+    },
+    "4": {
+        "id": "4",
+        "name": "Real Madrid",
+        "city": "Madrid",
+        "logo": ".\/res\/realmadrid.png"
+    },
+    "5": {
+        "id": "5",
+        "name": "Manchester City",
+        "city": "Manchester",
+        "logo": ".\/res\/mancity.png"
+    },
+    "6": {
+        "id": "6",
+        "name": "Ferencv\u00e1rosi TC",
+        "city": "Budapest",
+        "logo": ".\/res\/fere.png"
+    },
+    "7": {
+        "id": "7",
+        "name": "Inter Milan",
+        "city": "Milan",
+        "logo": ".\/res\/inter.png"
+    },
+    "8": {
+        "id": "8",
+        "name": "Liverpool",
+        "city": "Liverpool",
+        "logo": ".\/res\/pool.png"
+    }
+}

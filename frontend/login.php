@@ -11,15 +11,15 @@
       }
 
     // Loading (all) dependencies
-    require_once(__DIR__ . "/utils/storage.inc.php");
-    require_once(__DIR__ . "/utils/input.inc.php");
-    require_once(__DIR__ . "/utils/auth.inc.php");
+    require_once(__DIR__ . "/../backend/utils/storage.inc.php");
+    require_once(__DIR__ . "/../backend/utils/input.inc.php");
+    require_once(__DIR__ . "/../backend/utils/auth.inc.php");
 
-    $userStorage = new Storage(new JsonIO(__DIR__ . "/data/users.json"));
+    $userStorage = new Storage(new JsonIO(__DIR__ . "/../backend/data/users.json"));
     $auth = new Auth($userStorage);
 
     if($auth->is_authenticated()){
-        header("Location: http://webprogramming.inf.elte.hu/students/zyqsyj/vaxin_res/index.php", true, 301);///carrying data to log-in page
+        header("Location: /index.php", true, 301);///carrying data to log-in page
         exit();
     }
     
@@ -81,11 +81,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>login</title>
-    <link rel="stylesheet" href="styles/login.css">
+    <link rel="stylesheet" href="style/auth.css">
 </head>
 <body>
     <nav class="main-nav"> 
-        <h1 class="nav-header">Vaccine Appointments</h1>
+        <h1 class="nav-header">ELTE Stadium Web App</h1>
     </nav>
 
     <main class="main-container">
@@ -93,7 +93,7 @@
             <h1>Log-in</h1>
             <div class="section-content">
                 <form action="" novalidate method="post">
-                    <h3 class="label">Email: </h3>
+                    <h3 class="label">Username: </h3>
                     
                     <?php if(isset($email)):?>
                         <input class="costum_input" type="text" id="email" name="email" value="<?=$email?>" placeholder="e.g: email@something.com" required/>
