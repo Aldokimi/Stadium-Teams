@@ -1,117 +1,100 @@
-* {
-            background-color: white;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa&display=swap');
 
-        :root {
-            --header-bg-color: #429000;
-        }
+*{
+    margin: 0;
+    padding: 0;
+}
 
-        .main-nav {
-            background-color: var(--header-bg-color);
-            padding: 20px;
-        }
-        .nav-header {
-            text-align: center;
-            color: azure;
-            text-shadow: 5px 5px 10px black;
-            padding: 10px 10px 10px 10px;
-            background-color: var(--header-bg-color);
-        }
+body {
+  background: linear-gradient(90deg, #5cc317 0%, #e7efff 100%);
+}
+
+.login {
+  width: 360px;
+  padding: 8% 0 0;
+  margin: auto;
+  font-family: 'Comfortaa', cursive;
+}
+
+.form {
+  position: relative;
+  box-shadow: 0 4px 8px 0 rgb(0, 0, 0);
+  z-index: 1;
+  background: #FFFFFF;
+  border-radius: 10px;
+  max-width: 360px;
+  margin: 0 auto 100px;
+  padding: 45px;
+  text-align: center;
+}
+
+.form input {
+  outline: 0;
+  background: #5cc317;
+  width: 100%;
+  border: 0;
+  border-radius: 5px;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-family: 'Comfortaa', cursive;
+}
+
+.form input:focus {
+  background: #dbdbdb;
+}
+
+.error{
+  background-color: red !important;
+  font-size: 1rem !important;
+  border: 1px red solid !important;
+}
+
+.form .btns{
+  font-family: 'Comfortaa', cursive;
+  text-transform: uppercase;
+  outline: 0;
+  background: #000000;
+  width: 100%;
+  border: 0;
+  border-radius: 5px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  color: #FFFFFF;
+  font-size: 14px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.form .btns:hover{
+    background-color: #5cc317;
+}
 
 
-        /* Main body container */
-        .main-container{
-            width:90%;
-            padding: 10px;
-            margin: auto;
-        }
+.title{
+  font-family: 'Comfortaa', cursive;
+  margin: 0;
+  position: absolute;
+  top: 7%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid #fff;
+  padding: 0.5rem;
+  border-radius: 3rem;
+  background-color: #000000;
+  color: white;
+  box-shadow: 0 4px 8px 0 rgb(0, 0, 0);
+}
 
-        .main-container section{
-            position: relative;
-            border-radius: 10px;
-            max-width: 400px;
-            border: 15px solid rgb(221, 245, 255);
-            margin: 30px auto;
-        }
+.logo{
+  font-size: 60px;
+  color: #5cc317;
+  margin-bottom: 5px;
+}
 
-        .main-container section h1{
-            position: absolute;
-            text-align: center;
-            display: inline-block;
-            border-radius: 5px;
-            padding: 3px;
-            background-color: rgb(221, 245, 255);
-            top: -20px;
-        }
-
-        .main-container section .section-content{
-            margin-top: 20px ;
-            overflow: auto;
-        }
-
-        /*Form content*/
-        .label{
-            text-align: center;
-            margin: 10px auto auto auto;
-        }
-        .costum_input {
-            display: block;
-            margin: 5px auto 10px auto;
-            height: 25px;
-            outline: none;
-            border: 2px solid rgb(149, 162, 170);
-            width: 200px;
-            padding: 0 5px;
-        }
-
-        .line{
-            height: 5px;
-            background-color:rgb(196, 214, 221);
-            width: 80%;
-            border-radius: 3px;
-            margin: auto;
-        }
-        .submit-btn{
-            width: 80px;
-            height: 30px;
-            border-radius: 5px;
-            background-color: azure;
-            display: block;
-            margin: 20px auto 10px auto;
-            cursor: pointer;
-            border: 1px solid var(--header-bg-color);
-            outline: none;
-            transition: 0.1s background ease-in-out;
-        }
-        .submit-btn:hover{
-            background-color: rgb(197, 203, 218);
-        }
-
-        .error{
-            color: black;
-            display: block;
-            background-color: lightcoral;
-            border: 1px solid red;
-            padding: 10px;
-            margin: 10px auto;
-            max-width: 300px;
-        }
-
-        .link-btns{
-            display: inline-block;
-            width: auto;
-
-            margin: 0 10px;
-        }
-
-        .info-show{
-            margin: 10px;
-            height: 22px;
-            width: 200px;
-            outline: none;
-            background-color: rgb(221, 221, 221);
-            border: 2px solid var(black);
-        }
+.label{
+  padding: 5px;
+}

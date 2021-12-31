@@ -1,78 +1,56 @@
 <?php
-
-
     session_start();
-    //Functions area
+
+    require_once(__DIR__ . "/../backend/utils/storage.inc.php");
+    require_once(__DIR__ . "/../backend/utils/auth.inc.php");
+    
+    $userStorage = new Storage(new JsonIO(__DIR__ . "/../backend/data/users.json"));
+    $auth = new Auth($userStorage);
+    
+    if($auth->is_authenticated()){
+        header("Location: /index.php", true, 301);
+        exit();
+    }
+    
     function test_input($data) {
         $data = trim($data);
         $data = stripslashes($data);
         $data = htmlspecialchars($data);
         return $data;
-      }
-
-    // Loading (all) dependencies
-    require_once(__DIR__ . "/../backend/utils/storage.inc.php");
-    require_once(__DIR__ . "/../backend/utils/input.inc.php");
-    require_once(__DIR__ . "/../backend/utils/auth.inc.php");
-
-    $userStorage = new Storage(new JsonIO(__DIR__ . "/../backend/data/users.json"));
-    $auth = new Auth($userStorage);
-
-    if($auth->is_authenticated()){
-        header("Location: /index.php", true, 301);///carrying data to log-in page
-        exit();
     }
-    
-    ///validating inputs...
-    if(verify_post("email")){
-        $email = test_input($_POST["email"]);
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-          $emailErr = "Invalid email format";
+
+    function validate($input, &$data, &$errors){
+        if(isset($input["username"] ) && (!$input['username'] == '')){
+            $data['username'] = test_input($input["username"]);
+        }else{
+            $errors['username-required'] = "Username is required!";
         }
-    }else{
-        $emailErr = "Email is required";
+    
+        if(isset($input["password"]) && (!$input['password'] == '')){
+            $data['password'] = test_input($input["password"]);
+        }else{
+            $errors['password-required'] = "Password is required!";
+        }
+        return count($errors) === 0;
     }
-
-    if(verify_post("pass")){
-        $pass = test_input($_POST["pass"]);
-    }else{
-        $passErr = "Insert a Password";
-    }
-
-    ///Authinticate Logger...
-    if(isset($pass) && isset($email) && !isset($emailErr)){
-         // Initialize Auth class
-         if(isset($_SESSION['user'])){
+      
+    $errors = [];
+    $data = [];
+      
+    if(validate($_POST, $data, $errors)){
+        if(isset($_SESSION['user'])){
             unset($_SESSION['user']);
         }
-
-        $user = $auth->authenticate($email, $pass);
-
-        
+        $user = $auth->authenticate($data['username'], $data['password']);
         if(!is_null($user)){
             $auth->login($user);
-            if(verify_get("mm", "dd" ,"yy", "hr","mn")){
-                $lin = "dd=". $_GET["dd"] . "&mm=".$_GET["mm"] ."&yy=".$_GET["yy"] . "&hr=". $_GET["hr"] ."&mn=". $_GET["mn"];
-                if(strlen($user["time"]) > 0){
-                    header("Location: http://webprogramming.inf.elte.hu/students/zyqsyj/vaxin_res/index.php", true, 301);
-                    exit();
-                }else{
-                    header("Location: http://webprogramming.inf.elte.hu/students/zyqsyj/vaxin_res/booking.php?$lin",true,301);
-                    exit();
-                }
-            }else{
-                header("Location: http://webprogramming.inf.elte.hu/students/zyqsyj/vaxin_res/index.php",true,301);
-                exit();
-            }
-            
-            
+            header("Location: /index.php", true, 301);
+            exit();
         }else{
-            $userNotFound = true;
+            print(1);
+            $errors['user-does-not-exisit'] = 'User does not exisit!';
         }
     }
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -84,47 +62,33 @@
     <link rel="stylesheet" href="style/auth.css">
 </head>
 <body>
-    <nav class="main-nav"> 
-        <h1 class="nav-header">ELTE Stadium Web App</h1>
-    </nav>
-
-    <main class="main-container">
-        <section>
-            <h1>Log-in</h1>
-            <div class="section-content">
-                <form action="" novalidate method="post">
-                    <h3 class="label">Username: </h3>
-                    
-                    <?php if(isset($email)):?>
-                        <input class="costum_input" type="text" id="email" name="email" value="<?=$email?>" placeholder="e.g: email@something.com" required/>
-                        <?php if(isset($emailErr)):?> <span class="error"><?=$emailErr?></span> <?php endif?>
-                            
-                    <?php else:?>
-                        <input class="costum_input" type="text" id="email" name="email" placeholder="e.g: email@something.com" required/>
-                    <?php endif?>
-
-
-                    <div class="line"></div>
-                    <h3 class="label">Passowrd: </h3>
-                    <input class="costum_input" type="password" id="pass" name="pass" required/>
-                    <div class="line"></div>
-                    <input type="submit" class="submit-btn" value="Login">
-                </form>
-            </div>
-        </section>
-        <?php 
-            if(isset($userNotFound)){
-                echo "<div class=\"error\">User Not Found! or Invalid Password!</div>";
-            }
-        ?>
-        <div class="line"></div>
-        <div style="text-align:center;">
-            <a href="index.php" class="link-btns"><button class="submit-btn" style="width: 200px;">Back to main page</button></a>
-            <a href="register.php" class="link-btns"><button class="submit-btn" style="width: 200px;">I don't have an accout</button></a>
+    <div class="title">
+        <h1>ELTE Stadium Web App</h1>
+    </div>
+    
+    <div class="login">
+        <div class="form">
+            <form class="login-form" action="" novalidate method="post">
+                <span class="logo">LOGIN</span>
+                <h3 class="label">Email: </h3>
+                <?php if(isset($data['username'])):?>
+                    <input class="costum_input" type="text" id="username" name="username" value="<?=$data['username']?>" placeholder="e.g: Mohammed" required/>
+                    <span class="error"><?= isset($errors['invalid-username']) ? $errors['invalid-username'] : 
+                                            (isset($errors['username-required']) ? $errors['username-required'] : "" ) ?></span>
+                <?php else:?>
+                    <input class="costum_input" type="text" id="username" name="username" placeholder="Username" required/>
+                <?php endif?>
+                <h3 class="label">Passowrd: </h3>
+                <input class="costum_input" type="password" id="pass" name="password" required/>
+                <?php if(isset($data['password'])):?>
+                    <span class="error"><?php if(isset($errors['password-required'])):?> <?=$errors['password-required']?> <?php endif?></span>
+                <?php endif?>
+                <input type="submit" class="btns" value="Login">
+                <?php if(isset($errors['user-does-not-exisit'])):?> <span class="error"><?=$errors['user-does-not-exisit']?> </span><?php endif?>
+                <button type="button" class="btns" onclick="location.href='./index.php';">main page</button>
+                <button type="button" class="btns" onclick="location.href='./register.php';">register</button>
+            </form>  
         </div>
-       
-    </main>
-
-
+    </div>  
 </body>
 </html>

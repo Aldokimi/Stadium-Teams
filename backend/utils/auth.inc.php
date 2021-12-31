@@ -14,28 +14,26 @@ class Auth {
 
   public function register($data) {
     $user = [
-      "fullname"  => $data["fullname"],
-      "address" => $data["address"],
-      "SSN" => $data["SSN"],
-      "email" => $data["email"],
-      "time" => "",
-      "password"  => password_hash($data["password"], PASSWORD_DEFAULT),     
-      "roles"     => ["user"],
+      "username"   => $data["username"],
+      "email"      => $data["email"],
+      "password"   => password_hash($data["password"], PASSWORD_DEFAULT),     
+      "roles"      => ["user"],
+      "likedteams" => [],
     ];
-    if( !is_null( $this->authenticate($user["email"], $user["password"])) || $this->user_exists($user["email"])){
+    if( !is_null( $this->authenticate($user["username"], $user["password"])) || $this->user_exists($user["username"])){
       return NULL;
     }
     return $this->user_storage->add($user);
   }
 
-  public function user_exists($email) {
-    $users = $this->user_storage->findOne(["email" => $email]);
+  public function user_exists($username) {
+    $users = $this->user_storage->findOne(["username" => $username]);
     return !is_null($users);
   }
 
-  public function authenticate($email, $password) {
-    $users = $this->user_storage->findMany(function ($user) use ($email, $password) {
-      return $user["email"] === $email &&
+  public function authenticate($username, $password) {
+    $users = $this->user_storage->findMany(function ($user) use ($username, $password) {
+      return $user["username"] === $username &&
              password_verify($password, $user["password"]);
     });
     
@@ -71,10 +69,4 @@ class Auth {
   public function authenticated_user() {
     return $this->user;
   }
-
-  // public function update_user($user){
-  //   unset($_SESSION["user"]); 
-  //   $this->user = $user;
-  //   $_SESSION["user"] = $user;
-  // }
 }

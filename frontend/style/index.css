@@ -1,180 +1,184 @@
+*{
+    margin: 0;
+    padding: 0;
+}
 
-        *{
-            margin: 0;
-            padding: 0;
-        }
-        .description{
-            position:absolute;
-            border: 1px solid rgb(42, 133, 0);
-            border-radius: 2rem;
-            top: 5%;
-            left: 20%;
-            right: 20%;
-            padding-bottom: 1rem;
-        }
-        .description > h1{
-            position:relative;
-            margin-bottom: 2rem;
-            margin-top: 0.5rem;
-            color: rgb(17, 17, 17); 
-            font-family:cursive, sans-serif; 
-            font-weight: bold; 
-            letter-spacing: -1px; 
-            line-height: 1; 
-            text-align: center;
-        }
-        .description > p{
-            position:relative;
-            padding-left: 5%;
-            padding-right: 5%;
-            margin-bottom: 2rem;
-            color: #666; 
-            font-size: x-large;
-        }
-        .teams{
-            position: absolute;
-            top: 50%;
-            left: 5%;
-            display: grid;
-            gap: 0.5rem;
-            
-            height: 50%;
-        }
-        .team{
-            box-shadow: 0 4px 8px 0 rgb(130, 255, 159);
-            transition: 0.3s;
-            cursor: pointer;
-            width: 60%;
-            
-        }
-        .team > h4, p{
-            float:left;
-        }
-        .team:hover {
-            box-shadow: 0 8px 16px 0 rgba(58, 167, 82, 0.9);
-        }
-        .last-5-matches{
-            position:absolute;
-            top: 93%;
-            left: 10%;
-            right: 10%;
-            padding-bottom: 10%;
-            display: grid;
-            grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-        }
-        .match{
-            border: 1px solid rgb(42, 133, 0);
-            border-radius: 2rem;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            font-size: large;
-            box-shadow: 0 8px 16px 0 rgba(58, 167, 82, 0.9);
-        }
-        .match > p, .match > span, .match > h4{
-            padding: 0.5rem;
-            float:left;
-            padding-left: 10%;
-            background-color: rgba(58, 167, 82);
-        }
-        .auths{
-            position: absolute;
-            top: 10%;
-            left: 3%
-        }
-        #seewho{
-            display: block;
-            text-align: center;
-            font-weight: bold;
-            color:#fff;
-            text-decoration: none;
-            background-color: #429000;
-            padding:10px 5px;
-            -webkit-border-radius: 10px;
-            -moz-border-radius: 10px;
-            border-radius: 10px;
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            box-sizing: border-box;
-            border: 5px solid #429000;
-            box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 0.15);
-        }
+body {
+    background: linear-gradient(90deg, #5cc317 0%, #e7efff 100%);
+}
 
-        #seewho:active{
-            position: relative;
-            top:3px;
-            left:2px;
-            box-shadow: 0px 0px;
-        }
+.description{
+    position:absolute;
+    border: 1px solid rgb(42, 133, 0);
+    border-radius: 2rem;
+    top: 5%;
+    left: 20%;
+    right: 20%;
+    padding-bottom: 1rem;
+}
+.description > h1{
+    position:relative;
+    margin-bottom: 2rem;
+    margin-top: 0.5rem;
+    color: rgb(17, 17, 17); 
+    font-family:cursive, sans-serif; 
+    font-weight: bold; 
+    letter-spacing: -1px; 
+    line-height: 1; 
+    text-align: center;
+}
+.description > p{
+    position:relative;
+    padding-left: 5%;
+    padding-right: 5%;
+    margin-bottom: 2rem;
+    color: #666; 
+    font-size: x-large;
+}
+.teams{
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    display: grid;
+    gap: 0.5rem;
+    
+    height: 50%;
+}
+.team{
+    box-shadow: 0 4px 8px 0 rgb(130, 255, 159);
+    transition: 0.3s;
+    cursor: pointer;
+    width: 60%;
+    
+}
+.team > h4, p{
+    float:left;
+}
+.team:hover {
+    box-shadow: 0 8px 16px 0 rgba(58, 167, 82, 0.9);
+}
+.last-5-matches{
+    position:absolute;
+    top: 93%;
+    left: 10%;
+    right: 10%;
+    padding-bottom: 10%;
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+}
+.match{
+    border: 1px solid rgb(42, 133, 0);
+    border-radius: 2rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    font-size: large;
+    box-shadow: 0 8px 16px 0 rgba(58, 167, 82, 0.9);
+}
+.match > p, .match > span, .match > h4{
+    padding: 0.5rem;
+    float:left;
+    padding-left: 10%;
+    background-color: rgba(58, 167, 82);
+}
+.auths{
+    position: absolute;
+    top: 10%;
+    left: 3%
+}
+#seewho{
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    color:#fff;
+    text-decoration: none;
+    background-color: #429000;
+    padding:10px 5px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border: 5px solid #429000;
+    box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 0.15);
+}
 
-        #seewho:hover{
-            background-color: #fff;
-            color:#429000;
-            font-weight: bold;
-            cursor: pointer;
-        }
+#seewho:active{
+    position: relative;
+    top:3px;
+    left:2px;
+    box-shadow: 0px 0px;
+}
 
-        #seewho2{
-            display: block;
-            text-align: center;
-            font-weight: bold;
-            color:#fff;
-            text-decoration: none;
-            background-color: #0675B8;
-            padding:10px 5px;
-            -webkit-border-radius: 10px;
-            -moz-border-radius: 10px;
-            border-radius: 10px;
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            box-sizing: border-box;
-            border: 5px solid #0675B8;
-            box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 0.15);
-            transition: all 0.15s ease 0s;
-        }
+#seewho:hover{
+    background-color: #fff;
+    color:#429000;
+    font-weight: bold;
+    cursor: pointer;
+}
 
-        #seewho2:active{
-            position: relative;
-            top:3px;
-            left:2px;
-            box-shadow: 0px 0px;
-        }
+#seewho2{
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    color:#fff;
+    text-decoration: none;
+    background-color: #0675B8;
+    padding:10px 5px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border: 5px solid #0675B8;
+    box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 0.15);
+    transition: all 0.15s ease 0s;
+}
 
-        #seewho2:hover{
-            background-color: #fff;
-            color:#0675B8;
-            font-weight: bold;
-            cursor: pointer;
-        }
+#seewho2:active{
+    position: relative;
+    top:3px;
+    left:2px;
+    box-shadow: 0px 0px;
+}
 
-        .team-rep{
-            position: absolute;
-            left: 10%;
-            top: 10%;
-            height: 20%;
-            width: 20%;
-            background-color:  greenyellow;
-        }
-        .team-rep > h1{
-            position: relative;
-            left: 10%;
-        }
-        .matches-played{
-             position: absolute;
-             left: 35%;
-             top: 10%;
-             height: 60%;
-             width: 60%;
-        }
-         table, th, td {
-             border:1px solid black;
-             font-size: x-large;
-         }
-         .comment{
-             position: absolute;
-             top: 60.5%;
-             left: 10%;
-             padding: 1%;
-             background-color: greenyellow;
-             border: 1px solid black;
-             border-radius: 2rem;
-         }
+#seewho2:hover{
+    background-color: #fff;
+    color:#0675B8;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.team-rep{
+    position: absolute;
+    left: 10%;
+    top: 10%;
+    height: 20%;
+    width: 20%;
+    background-color:  greenyellow;
+}
+.team-rep > h1{
+    position: relative;
+    left: 10%;
+}
+.matches-played{
+        position: absolute;
+        left: 35%;
+        top: 10%;
+        height: 60%;
+        width: 60%;
+}
+table, th, td {
+    border:1px solid black;
+    font-size: x-large;
+}
+.comment{
+    position: absolute;
+    top: 60.5%;
+    left: 10%;
+    padding: 1%;
+    background-color: greenyellow;
+    border: 1px solid black;
+    border-radius: 2rem;
+}
