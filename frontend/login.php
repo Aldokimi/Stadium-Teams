@@ -8,7 +8,7 @@
     $auth = new Auth($userStorage);
     
     if($auth->is_authenticated()){
-        header("Location: /index.php", true, 301);
+        header("Location: ./index.php", true, 301);
         exit();
     }
     
@@ -42,13 +42,14 @@
             unset($_SESSION['user']);
         }
         $user = $auth->authenticate($data['username'], $data['password']);
+        // print(var_dump(password_verify('admin', $userStorage->findById('61ce92585cd95')['password'])) );
+        // print(var_dump($user));
         if(!is_null($user)){
             $auth->login($user);
-            header("Location: /index.php", true, 301);
+            header("Location: ./index.php", true, 301);
             exit();
         }else{
-            print(1);
-            $errors['user-does-not-exisit'] = 'User does not exisit!';
+            $errors['user-does-not-exisit'] = 'User may not exisit or invalid password was set!';
         }
     }
 ?>
@@ -68,23 +69,45 @@
     
     <div class="login">
         <div class="form">
-            <form class="login-form" action="" novalidate method="post">
+            <form class="login-form" action="" method="post" novalidate>
                 <span class="logo">LOGIN</span>
-                <h3 class="label">Email: </h3>
+                
+                <!-- Username -->
+                <h3 class="label">Username: </h3>
                 <?php if(isset($data['username'])):?>
                     <input class="costum_input" type="text" id="username" name="username" value="<?=$data['username']?>" placeholder="e.g: Mohammed" required/>
-                    <span class="error"><?= isset($errors['invalid-username']) ? $errors['invalid-username'] : 
-                                            (isset($errors['username-required']) ? $errors['username-required'] : "" ) ?></span>
                 <?php else:?>
                     <input class="costum_input" type="text" id="username" name="username" placeholder="Username" required/>
                 <?php endif?>
+
+                <?php if(isset($errors['invalid-username'])):?>
+                    <div class="error">
+                        <span ><?=$errors['invalid-username']?></span>
+                    </div>
+                <?php endif?>
+                <?php if(isset($errors['username-required'])):?>
+                    <div class="error"> 
+                        <span ><?=$errors['username-required']?></span>
+                    </div>
+                <?php endif?>
+                        
+                <!-- Password -->
                 <h3 class="label">Passowrd: </h3>
                 <input class="costum_input" type="password" id="pass" name="password" required/>
-                <?php if(isset($data['password'])):?>
-                    <span class="error"><?php if(isset($errors['password-required'])):?> <?=$errors['password-required']?> <?php endif?></span>
+
+                <?php if(isset($errors['password-required'])):?>
+                    <div class="error"> 
+                        <span ><?=$errors['password-required']?></span>
+                    </div>
                 <?php endif?>
+
                 <input type="submit" class="btns" value="Login">
-                <?php if(isset($errors['user-does-not-exisit'])):?> <span class="error"><?=$errors['user-does-not-exisit']?> </span><?php endif?>
+                <?php if(isset($errors['user-does-not-exisit'])):?> 
+                    <div class="error"> 
+                        <span ><?=$errors['user-does-not-exisit']?> 
+                    </div>
+                </span><?php endif?>
+
                 <button type="button" class="btns" onclick="location.href='./index.php';">main page</button>
                 <button type="button" class="btns" onclick="location.href='./register.php';">register</button>
             </form>  

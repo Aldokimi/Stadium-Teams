@@ -1,24 +1,42 @@
-<?php
+<?php 
+session_start();
 
 require_once(__DIR__ . "/../backend/utils/storage.inc.php");
-$teamsStorage   = new Storage(new JsonIO(__DIR__ . "/../backend/data/teams.json"));
+require_once(__DIR__ . "/../backend/utils/auth.inc.php");
+
+$userStorage    = new Storage(new JsonIO(__DIR__ . "/../backend/data/users.json"  ));
+$teamsStorage   = new Storage(new JsonIO(__DIR__ . "/../backend/data/teams.json"  ));
 $matchesStorage = new Storage(new JsonIO(__DIR__ . "/../backend/data/matches.json"));
 
+$auth = new Auth($userStorage);
+
+$user = $auth->authenticated_user();
 $teams = $teamsStorage->findAll();
 $matches = $matchesStorage->findAll();
+
+
+
 $numberOfTeams = count($teams);
+
+usort($matches, 'date_compare');
+
+if(isset($_SESSION['user'])){
+    $username = $_SESSION['user']['username'];
+}
+
+$isLoggedIn = $auth->is_authenticated();
 
 function date_compare($element1, $element2) {
     $datetime1 = strtotime($element1['date']);
     $datetime2 = strtotime($element2['date']);
     return $datetime1 - $datetime2;
 } 
+function isAdmin(){
 
-usort($matches, 'date_compare');
+    return (isset($username) && $username == 'admin');
+}
 
-$isLoggedIn = false;
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,10 +48,12 @@ $isLoggedIn = false;
     <title>ELTE Stadium</title>
 </head>
 <body>
-
     <div class="auths" <?= $isLoggedIn ? 'hidden' : '' ?> >
-        <div style="float:left; padding: 0.2rem;"><a id="seewho" href="login.php">Sign Up</a></div>
+        <div style="float:left; padding: 0.2rem;"><a id="seewho" href="login.php">Login</a></div>
         <div style="float:left; padding: 0.2rem;"><a id="seewho2" href="register.php">Register</a></div>
+    </div>
+    <div class="auths" <?= $isLoggedIn ? '' : 'hidden' ?> >
+        <div style="float:left; padding: 0.2rem;"><a id="seewho" href="logout.php">Log out</a></div>
     </div>
     <div class="description">
         <h1>ELTE Stadium</h1>

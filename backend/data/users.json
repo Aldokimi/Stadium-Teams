@@ -1,1 +1,22 @@
-[]
+{
+    "61ce92585cd95": {
+        "username": "admin",
+        "email": "admin@eltestadium.hu",
+        "password": "$2y$10$VPXuUeA9AfeqrwmAc8l0MuUIai4hnaAztDebakiIk15.StGSe29Ia",
+        "roles": [
+            "user"
+        ],
+        "likedteams": [],
+        "id": "61ce92585cd95"
+    },
+    "61cea0f383e55": {
+        "username": "aldokimi",
+        "email": "mnd7729@gmail.com",
+        "password": "$2y$10$lcaoW39SlCHiqEm6y1b1t.qhfBIyEx2EMrFUjNg7U2jkEn8qYiALy",
+        "roles": [
+            "user"
+        ],
+        "likedteams": [],
+        "id": "61cea0f383e55"
+    }
+}
