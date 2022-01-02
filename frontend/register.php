@@ -1,64 +1,64 @@
 <?php
-    session_start();
-    
-    require_once(__DIR__ . "/../backend/utils/storage.inc.php");
-    require_once(__DIR__ . "/../backend/utils/auth.inc.php");
+session_start();
 
-    $userStorage = new Storage(new JsonIO(__DIR__ . "/../backend/data/users.json"));
-    $auth = new Auth($userStorage);
+require_once(__DIR__ . "/../backend/utils/storage.inc.php");
+require_once(__DIR__ . "/../backend/utils/auth.inc.php");
 
-    if($auth->is_authenticated()){
-        header("Location: ./index.php", true, 301);
-        exit();
+$userStorage = new Storage(new JsonIO(__DIR__ . "/../backend/data/users.json"));
+$auth = new Auth($userStorage);
+
+if($auth->is_authenticated()){
+    header("Location: ./index.php", true, 301);
+    exit();
+}
+
+function test_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
+
+function validate($input, &$data, &$errors){
+
+    //validating username
+    if(!isset($input["username"] ) || ($input['username'] == '')){
+        $errors['username-required'] = "Username is required!";
+    }else if (!preg_match("/^[a-zA-Z-' ]*$/", test_input($input["username"]) )) {
+        $errors['invalid-username'] = "Invalid username, only letters and white space allowed!";
+    }else{
+        $data['username'] = test_input($input["username"]);
+    }
+
+    //validating email
+    if(!isset($input["email"] ) || ($input['email'] == '')){
+        $errors['email-required']  = "Email is required!";
+    }else if (!filter_var(test_input($input["email"]), FILTER_VALIDATE_EMAIL)) {
+        $errors['invalid-email']  = "Invalid email format!";
+    }else{
+        $data['email'] = test_input($input["email"]);
+    }
+
+    //validating password
+    if(!isset($input["password"] ) || ($input['password'] == '')){
+        $errors['password-required'] = "Password is required!";
+    }
+    if(!isset($input["password-confirmation"] ) || ($input['password-confirmation'] == '')){
+        $errors['password-confirmation-required'] = "Password confirmation is required!";
+    }else if(test_input($input["password"]) !== test_input($input["password-confirmation"])){
+        $errors['password-not-same'] = "Both Passwords should be the same!";
+    }else{
+        $data["password"] = test_input($input["password"]);
+        $data["password-confirmation"] = test_input($input["password-confirmation"]);
     }
     
-    function test_input($data) {
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data);
-        return $data;
-    }
 
-    function validate($input, &$data, &$errors){
-
-        //validating username
-        if(!isset($input["username"] ) || ($input['username'] == '')){
-            $errors['username-required'] = "Username is required!";
-        }else if (!preg_match("/^[a-zA-Z-' ]*$/", test_input($input["username"]) )) {
-            $errors['invalid-username'] = "Invalid username, only letters and white space allowed!";
-        }else{
-            $data['username'] = test_input($input["username"]);
-        }
-
-        //validating email
-        if(!isset($input["email"] ) || ($input['email'] == '')){
-            $errors['email-required']  = "Email is required!";
-        }else if (!filter_var(test_input($input["email"]), FILTER_VALIDATE_EMAIL)) {
-            $errors['invalid-email']  = "Invalid email format!";
-        }else{
-            $data['email'] = test_input($input["email"]);
-        }
-
-        //validating password
-        if(!isset($input["password"] ) || ($input['password'] == '')){
-            $errors['password-required'] = "Password is required!";
-        }
-        if(!isset($input["password-confirmation"] ) || ($input['password-confirmation'] == '')){
-            $errors['password-confirmation-required'] = "Password confirmation is required!";
-        }else if(test_input($input["password"]) !== test_input($input["password-confirmation"])){
-            $errors['password-not-same'] = "Both Passwords should be the same!";
-        }else{
-            $data["password"] = test_input($input["password"]);
-            $data["password-confirmation"] = test_input($input["password-confirmation"]);
-        }
-        
-
-        return count($errors) === 0;
-    }
-        
-    $errors = [];
-    $data = [];
-        
+    return count($errors) === 0;
+}
+    
+$errors = [];
+$data = [];
+if($_POST){
     if(validate($_POST, $data, $errors)){
         $newData = [
             "username"  => $data['username'],
@@ -71,11 +71,8 @@
         }else{
             $errors['user-exists'] = "User already exisit, please login!";
         }
-    }else{
-        print_r($errors);
     }
-
-
+}
 ?>
 
 <!DOCTYPE html>

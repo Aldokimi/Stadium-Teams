@@ -1,42 +1,42 @@
 <?php
-    session_start();
+session_start();
 
-    require_once(__DIR__ . "/../backend/utils/storage.inc.php");
-    require_once(__DIR__ . "/../backend/utils/auth.inc.php");
-    
-    $userStorage = new Storage(new JsonIO(__DIR__ . "/../backend/data/users.json"));
-    $auth = new Auth($userStorage);
-    
-    if($auth->is_authenticated()){
-        header("Location: ./index.php", true, 301);
-        exit();
-    }
-    
-    function test_input($data) {
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data);
-        return $data;
+require_once(__DIR__ . "/../backend/utils/storage.inc.php");
+require_once(__DIR__ . "/../backend/utils/auth.inc.php");
+
+$userStorage = new Storage(new JsonIO(__DIR__ . "/../backend/data/users.json"));
+$auth = new Auth($userStorage);
+
+if($auth->is_authenticated()){
+    header("Location: ./index.php", true, 301);
+    exit();
+}
+
+function test_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
+
+function validate($input, &$data, &$errors){
+    if(isset($input["username"] ) && (!$input['username'] == '')){
+        $data['username'] = test_input($input["username"]);
+    }else{
+        $errors['username-required'] = "Username is required!";
     }
 
-    function validate($input, &$data, &$errors){
-        if(isset($input["username"] ) && (!$input['username'] == '')){
-            $data['username'] = test_input($input["username"]);
-        }else{
-            $errors['username-required'] = "Username is required!";
-        }
-    
-        if(isset($input["password"]) && (!$input['password'] == '')){
-            $data['password'] = test_input($input["password"]);
-        }else{
-            $errors['password-required'] = "Password is required!";
-        }
-        return count($errors) === 0;
+    if(isset($input["password"]) && (!$input['password'] == '')){
+        $data['password'] = test_input($input["password"]);
+    }else{
+        $errors['password-required'] = "Password is required!";
     }
-      
-    $errors = [];
-    $data = [];
-      
+    return count($errors) === 0;
+}
+    
+$errors = [];
+$data = [];
+if($_POST){
     if(validate($_POST, $data, $errors)){
         if(isset($_SESSION['user'])){
             unset($_SESSION['user']);
@@ -52,6 +52,7 @@
             $errors['user-does-not-exisit'] = 'User may not exisit or invalid password was set!';
         }
     }
+}
 ?>
 
 <!DOCTYPE html>

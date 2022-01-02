@@ -17,8 +17,8 @@ $matches = $matchesStorage->findAll();
 
 
 $numberOfTeams = count($teams);
-
 usort($matches, 'date_compare');
+$matches = array_reverse($matches);
 
 if(isset($_SESSION['user'])){
     $username = $_SESSION['user']['username'];
@@ -31,11 +31,25 @@ function date_compare($element1, $element2) {
     $datetime2 = strtotime($element2['date']);
     return $datetime1 - $datetime2;
 } 
-function isAdmin(){
 
-    return (isset($username) && $username == 'admin');
+function getTeamName($id){
+    global $teamsStorage;
+    return $teamsStorage->findById($id)['name'];
 }
 
+function matchColor($score1 , $score2){
+    if($score1 > $score2) return 'rgb(122, 255, 104)';
+    else if($score1 < $score2) return 'rgb(255, 88, 88)';
+    return 'rgb(245, 255, 104)';
+}
+
+function isAdmin(){
+    return (isset($_SESSION['user']['username']) && $_SESSION['user']['username'] == 'admin');
+}
+
+function home($match){ global $teamID; return $match['home']['id'] == $teamID ;} 
+function away($match){ global $teamID; return $match['away']['id'] == $teamID ;}
+function decided($match) {return is_numeric($match['home']['score'])  && is_numeric($match['away']['score']);}
 ?>
 
 <!DOCTYPE html>
@@ -62,6 +76,8 @@ function isAdmin(){
             and the fans are able to follow the 
             results of their favorite teams, give comments to the teams and enjoy.</p>
     </div>
+
+    <!-- Teams -->
     <div class="teams" style="grid-template-rows:    <?php for($i=0;$i<$numberOfTeams;$i++):?><?="1fr"?> <?php endfor?>; 
             grid-template-columns: <?php for($i=0;$i<$numberOfTeams;$i++):?><?="1fr"?> <?php endfor?>;">
         <?php foreach($teams as $id => $team):?>
@@ -72,25 +88,52 @@ function isAdmin(){
             </div>    
         <?php endforeach?>
     </div>
+
     <!-- Last 5 matches -->
     <div class="last-5-matches">
-        <?php $cnt = 0; foreach($matches as $matchID => $match):?>
-            <?php 
-                if($cnt === 5) break; 
-                $cnt++;
-                $team1ID = $match["home"]["id"];
-                $team2ID = $match["away"]["id"];
-                $team1 = $teams[$team1ID]['name'];
-                $team2 = $teams[$team2ID]['name'];
-            ?>
-            <div class="match">
-                <h4>Date: <?= $match["date"]?> </h5>
-                <h4><?=$team1?></h4> 
-                <span>VS</span>
-                <h4><?=$team2?></h4>
-                <p>Score: <?= $match["home"]["score"]. ' - ' .$match["away"]["score"]?> </p>
+        <div class="container">
+            <div class="matches">
+                <?php $cnt = 0; foreach( $matches as $id => $match):?>
+                    <?php if($cnt === 5) break; ?>
+                    <div class="match-content" >
+                        <div class="column">
+                            <div class="team-de team--home">
+                                <div class="team-logo">
+                                    <img src="<?= $teams[$match['home']['id']]['logo']?>" />
+                                </div>
+                                <h2 class="team-name"><?= getTeamName($match['home']['id'])?></h2>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="match-details">
+                                <div class="match-date">
+                                    <?=$match['date']?>
+                                </div>
+                                <div class="match-score">
+                                    <?php if(decided($match)):?>
+                                        home <span class="match-score-number match-score-number--leading"><?=$match['home']['score']?></span>
+                                        <span class="match-score-divider">:</span>
+                                        <span class="match-score-number"><?=$match['away']['score']?></span> away
+                                    <?php else:?>
+                                        home <span class="match-score-number match-score-number--leading">◻</span>
+                                        <span class="match-score-divider">:</span>
+                                        <span class="match-score-number">◻</span> away
+                                    <?php endif?>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="team-de team--away">
+                                <div class="team-logo">
+                                    <img src="<?= $teams[$match['away']['id']]['logo']?>" />
+                                </div>
+                                <h2 class="team-name"><?=getTeamName($match['away']['id'])?> </h2>
+                            </div>
+                        </div>
+                    </div>
+                <?php $cnt++; endforeach?>
             </div>
-        <?php endforeach?>
+        </div>
     </div>
     
 </body>

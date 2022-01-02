@@ -1,23 +1,36 @@
 <?php 
 session_start();
-$teamID = reset($_GET);
+$matchID = ($_GET['id'] ?? '');
+$teamID  = ($_GET['teamID'] ?? '');
 
 
 require_once(__DIR__ . "/../backend/utils/storage.inc.php");
 require_once(__DIR__ . "/../backend/utils/auth.inc.php");
 
-$userStorage     = new Storage(new JsonIO(__DIR__ . "/../backend/data/users.json"  ));
-$teamsStorage    = new Storage(new JsonIO(__DIR__ . "/../backend/data/teams.json"  ));
-$matchesStorage  = new Storage(new JsonIO(__DIR__ . "/../backend/data/matches.json"));
-$commentsStorage = new Storage(new JsonIO(__DIR__ . "/../backend/data/comments.json"));
+$userStorage    = new Storage(new JsonIO(__DIR__ . "/../backend/data/users.json"  ));
+$teamsStorage   = new Storage(new JsonIO(__DIR__ . "/../backend/data/teams.json"  ));
+$matchesStorage = new Storage(new JsonIO(__DIR__ . "/../backend/data/matches.json"));
 
 $auth = new Auth($userStorage);
 
 $user       = $auth->authenticated_user();
 $teams      = $teamsStorage->findAll();
 $matches    = $matchesStorage->findAll();
-$comments   = $commentsStorage->findAll();
 $isLoggedIn = $auth->is_authenticated();
+
+// print_r($matchesStorage->findById($matchID));
+
+// Original date
+$home = $matchesStorage->findById($matchID)['home'];
+$away = $matchesStorage->findById($matchID)['away'];
+$date = $matchesStorage->findById($matchID)['date'];
+
+function test_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
 
 function getTeamName($id){
     global $teamsStorage;
@@ -37,27 +50,67 @@ function isAdmin(){
 function home($match){ global $teamID; return $match['home']['id'] == $teamID ;} 
 function away($match){ global $teamID; return $match['away']['id'] == $teamID ;}
 function decided($match) {return is_numeric($match['home']['score'])  && is_numeric($match['away']['score']);}
-
-// handeling new comments
+function isValidDate($date, $format= 'Y-m-d'){
+    return $date == date($format, strtotime($date));
+}
 function validate($input, &$data, &$errors){
-    if(isset($input['comment']) && $input['comment'] != ''){
-        $data['text'] = $input['comment'];
+
+    //validating home score
+    if(isset($input['home-score']) && $input['home-score'] != ''){
+        if(is_numeric($input['home-score'])){
+            global $matchID;
+            global $matchesStorage;
+            $data['home'] = array(
+                'id' => $matchesStorage->findById($matchID)['home']['id'],
+                'score' => $input['home-score'],
+            );
+        }else{
+            $errors['invalid-home-score'] = 'Invalid home score!';
+        }
     }else{
-        $errors['empty-comment'] = 'You cannot submit empty comment!';
+        global $home;
+        $data['home'] = $home;
     }
+
+    //vakudating away score
+    if(isset($input['away-score']) && $input['away-score'] != ''){
+        if(is_numeric($input['away-score'])){
+            global $matchID;
+            global $matchesStorage;
+            $data['away'] = array(
+                'id' => $matchesStorage->findById($matchID)['away']['id'],
+                'score' => $input['away-score'],
+            );
+        }else{
+            $errors['invalid-away-score'] = 'Invalid away score!';
+        }
+    }else{
+        global $away;
+        $data['away'] = $away;
+    }
+
+    //validating data
+    if(isset($input['date']) && $input['date'] != '' ){
+        if(isValidDate($input['date'])){
+            $data['date'] = $input['date'];
+        }else{
+            $errors['invalid-date'] = 'Invalid date!';
+        }
+    }else{
+        global $date;
+        $data['date'] = $date;
+    }
+
     return count($errors) === 0;
 }
   
 $errors = [];
 $data = [];
-
 if($_POST){
     if(validate($_POST, $data, $errors)){
-        $data['author'] = $user['username'];
-        $data['teamid'] = $teamID;
-        $data['time'] = date('Y/m/d H:i:s');
-        $commentsStorage->add($data);
-        header("Location: ./team_details.php?teamID=". $teamID, true, 301);
+        $data['id'] = $matchID;
+        $matchesStorage->update($matchID, $data);
+        header("Location: ./team_details.php?teamID=".$teamID, true, 301);
         exit();
     }
 }
@@ -71,27 +124,13 @@ if($_POST){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style/index.css">
-    <style>
-        .btns{
-            position: fixed;
-            top: 90%;
-            left: 10%;
-            width: 10rem;
-        }
-    </style>
-    <title><?= $teams[$teamID]['name']?></title>
+    <title>admin page</title>
 </head>
 <body>
-    <div class="team-rep">
-        <img src="<?=$teams[$teamID]['logo']?>" alt="<?=$teams[$teamID]['name']?>logo" style="width:100%">
-        <h1><?=$teams[$teamID]['name']?></h1>
-    </div>
-    <div class="btns" >
-        <button type="button" id="seewho" onclick="location.href='./index.php';">main page</button>
-    </div>
-    <div class="container">
-        <div class="matches">
-            <?php foreach($matches as $id => $match):?>
+<div class="container">
+    <div class="matches">
+        <?php foreach($matches as $id => $match):?>
+            <?php if($match['id'] == $matchID):?>
                 <?php if(home($match)):?>
                     <div class="match-content" 
                     style="background-color:<?= decided($match) ? matchColor((int)$match['home']['score'] , (int)$match['away']['score']) : 'white' ?>;">
@@ -107,9 +146,6 @@ if($_POST){
                         <div class="column">
                             <div class="match-details">
                                 <div class="match-date">
-                                    <?php if(isAdmin()):?>
-                                        <button type="button" id="seewho" onclick="location.href='./modify.php?id=<?=$match['id']?>&teamID=<?=$teamID?>';">MODIFY</button>
-                                    <?php endif?> <br>
                                     <?=$match['date']?>
                                 </div>
                                 <div class="match-score">
@@ -149,9 +185,6 @@ if($_POST){
                         <div class="column">
                             <div class="match-details">
                                 <div class="match-date">
-                                    <?php if(isAdmin()):?>
-                                        <button type="button" id="seewho" onclick="location.href='./modify.php?id=<?=$match['id']?>&teamID=<?=$teamID?>';">MODIFY</button>
-                                    <?php endif?> <br>
                                     <?=$match['date']?>
                                 </div>
                                 <div class="match-score">
@@ -162,7 +195,7 @@ if($_POST){
                                     <?php else:?>
                                         away <span class="match-score-number match-score-number--leading">◻</span>
                                         <span class="match-score-divider">:</span>
-                                        <span class="match-score-number">◻</span> home
+                                        <span class="match-score-number">◻</span> home 
                                     <?php endif?>
                                 </div>
                             </div>
@@ -175,71 +208,47 @@ if($_POST){
                                 <h2 class="team-name"><?=getTeamName($match['home']['id'])?> </h2>
                             </div>
                         </div>
-                        
                     </div>
                 <?php endif?>
-            <?php endforeach?>
-
-            <div class="comments">
-                <div class="comments-container">
-                    <h1>COMMENTS</h1>
-
-                    <ul id="comments-list" class="comments-list">
-                        <?php foreach($comments as $comment):?>
-                            <?php if($comment['teamid'] == $teamID):?>
-                                <li>
-                                    <div class="comment-main-level">
-                                        <div class="comment-avatar"><img src="http://i9.photobucket.com/albums/a88/creaticode/avatar_1_zps8e1c80cd.jpg" alt=""></div>
-                                        <div class="comment-box">
-                                            <div class="comment-head">
-                                                <h6 class="comment-name by-author"><?=$comment['author']?></h6>
-                                                <span><?=$comment['time']?></span>
-                                                <i class="fa fa-reply"></i>
-                                                <i class="fa fa-heart"></i>
-                                            </div>
-                                            <div class="comment-content">
-                                                <?=$comment['text']?>
-                                            </div>
-                                            <div>
-                                                <?php if(isAdmin()):?>
-                                                    <button type="button" id="seewho" onclick="location.href='./delete.php?id=<?= $comment['id']?>&teamID=<?=$teamID?>';">DELETE</button>
-                                                <?php endif?> <br>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            <?php endif?>
-                        <?php endforeach?>
-                    </ul>
-                </div>
-            </div>
-            <div class="add-comment-container">
-                <form class="login-form" action="" method="post" novalidate>
-                    <fieldset>
-                        <div class="form_grp">
-                            <label>comment</label>
-                            <textarea name="comment" id="comment" cols="30" rows="10"  placeholder="Add a comment..."
-                                      style="color: <?= $isLoggedIn ? 'black' : 'red' ?>;font-size: larger;"
-                                <?php if(!$isLoggedIn ):?>
-                                      onclick="document.getElementById('comment').innerHTML='Login is required to write a comment!'" 
-                                      readonly
-                                <?php endif?>></textarea>       
-                        </div>
-                        <div class="form_grp">
-                            <button type="submit" id="seewho2">Submit</button>
-                            <?php if(isset($errors['empty-comment'])):?> 
-                                <div class="error"> 
-                                    <span ><?=$errors['empty-comment']?> </span>
-                                </div>
-                            <?php endif?>
-                        </div>
-                    </fieldset>
-                </form>  
-                
-            </div>
-
-        </div>
+            <?php endif?>
+        <?php endforeach?>
     </div>
 
+    <div class="form">
+        <form class="login-form" action="" method="post" novalidate>
+            <span class="logo">MODIFY MATCH <strong><?=$matchID?></strong></span>
+            <div class="modify-container">
+                <!-- HOME -->
+                <h2 class="label">HOME: </h2>
+                <div id="home-score">
+                    <?php if(isset($data['home-score'])):?>
+                        <input type="number" name="home-score" value="<?=$data['home-score']?>" placeholder="score"/>
+                    <?php else:?>
+                        <input type="number" name="home-score" placeholder="score" />
+                    <?php endif?>
+                </div>
+
+                <!-- AWAY -->
+                <h2 class="label">AWAY: </h2>
+
+                <div id="away-score">
+                    <?php if(isset($data['away-score'])):?>
+                        <input type="number" name="away-score" value="<?=$data['away-score']?>" placeholder="score"/>
+                    <?php else:?>
+                        <input type="number" name="away-score" placeholder="score" />
+                    <?php endif?>
+                </div>
+
+                <!-- DATE -->
+                <h2 class="label">DATE: </h2>
+                <?php if(isset($data['date'])):?>
+                    <input type="date" id="date" name="date" value="<?=$data['date']?>" placeholder="score"/>
+                <?php else:?>
+                    <input type="date" id="date" name="date" placeholder="date" />
+                <?php endif?>
+            <button type="submit" id='seewho' class="btns" onclick="modifyMatch(<?= json_encode($data)?>)">modify</button>
+            </div>
+        </form>  
+    </div>
 </body>
 </html>
