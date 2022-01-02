@@ -6,7 +6,9 @@
         "roles": [
             "user"
         ],
-        "likedteams": [],
+        "likedteams": [
+            "1"
+        ],
         "id": "61ce92585cd95"
     },
     "61cea0f383e55": {

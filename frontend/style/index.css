@@ -57,9 +57,21 @@ body {
 .team > h4, p{
     float:left;
 }
-.team:hover {
-    box-shadow: 0 8px 16px 0 rgba(58, 167, 82, 0.9);
+
+.team:active{
+  position: relative;
+  top:3px;
+  left:2px;
+  box-shadow: 0px 0px;
 }
+
+.team:hover{
+  background-color: rgb(102, 235, 49);
+  color:#429000;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .last-5-matches{
     position:absolute;
     top: 93%;
@@ -198,7 +210,6 @@ body {
 	box-shadow: 0 0 2px 0 rgba(#303030, 0.1), 0 4px 4px 0 rgba(#303030, 0.1);
   position: absolute;
   left: 35%;
-  top: 10%;
 }
 
 
@@ -296,6 +307,13 @@ body {
   flex-wrap: wrap;
 	justify-content: center;
 	align-items: center;
+}
+
+.btns{
+  position: fixed;
+  top: 90%;
+  left: 10%;
+  width: 10rem;
 }
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *                                                                                                                 

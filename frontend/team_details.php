@@ -71,14 +71,6 @@ if($_POST){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style/index.css">
-    <style>
-        .btns{
-            position: fixed;
-            top: 90%;
-            left: 10%;
-            width: 10rem;
-        }
-    </style>
     <title><?= $teams[$teamID]['name']?></title>
 </head>
 <body>
@@ -87,7 +79,7 @@ if($_POST){
         <h1><?=$teams[$teamID]['name']?></h1>
     </div>
     <div class="btns" >
-        <button type="button" id="seewho" onclick="location.href='./index.php';">main page</button>
+        <button type="button" id="seewho" onclick="location.href='./index.php';">MAIN PAGE</button>
     </div>
     <div class="container">
         <div class="matches">
@@ -225,14 +217,16 @@ if($_POST){
                                       readonly
                                 <?php endif?>></textarea>       
                         </div>
-                        <div class="form_grp">
-                            <button type="submit" id="seewho2">Submit</button>
-                            <?php if(isset($errors['empty-comment'])):?> 
-                                <div class="error"> 
-                                    <span ><?=$errors['empty-comment']?> </span>
-                                </div>
-                            <?php endif?>
-                        </div>
+                        <?php if($isLoggedIn):?>
+                            <div class="form_grp">
+                                <button type="submit" id="seewho2">Submit</button>
+                                <?php if(isset($errors['empty-comment'])):?> 
+                                    <div class="error"> 
+                                        <span ><?=$errors['empty-comment']?> </span>
+                                    </div>
+                                <?php endif?>
+                            </div>
+                        <?php endif?>
                     </fieldset>
                 </form>  
                 

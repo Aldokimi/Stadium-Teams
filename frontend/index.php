@@ -14,9 +14,8 @@ $user = $auth->authenticated_user();
 $teams = $teamsStorage->findAll();
 $matches = $matchesStorage->findAll();
 
-
-
 $numberOfTeams = count($teams);
+
 usort($matches, 'date_compare');
 $matches = array_reverse($matches);
 
@@ -78,9 +77,13 @@ function decided($match) {return is_numeric($match['home']['score'])  && is_nume
     </div>
 
     <!-- Teams -->
-    <div class="teams" style="grid-template-rows:    <?php for($i=0;$i<$numberOfTeams;$i++):?><?="1fr"?> <?php endfor?>; 
+    <div class="teams" style="grid-template-rows: <?php for($i=0;$i<$numberOfTeams;$i++):?><?="1fr"?> <?php endfor?>; 
             grid-template-columns: <?php for($i=0;$i<$numberOfTeams;$i++):?><?="1fr"?> <?php endfor?>;">
         <?php foreach($teams as $id => $team):?>
+            <?php if($isLoggedIn):?>
+                <button type="button" id="seewho" 
+                        onclick="location.href='./add_favorate.php?teamID=<?=$id?>&userID=<?=$user['id']?>';">ADD TO FAVORATE</button>
+            <?php endif?>
             <div class="team" onclick="location.href='./team_details.php?teadID=<?=$id?>';" style="padding: 1rem;"> 
                 <img src="<?=$team["logo"]?>" alt="<?=$team["name"]?>logo" style="width:100%">
                 <h4 style="padding: 0.3rem;"><b><?=$team["name"]?></b></h4>
@@ -92,10 +95,13 @@ function decided($match) {return is_numeric($match['home']['score'])  && is_nume
     <!-- Last 5 matches -->
     <div class="last-5-matches">
         <div class="container">
-            <div class="matches">
+            <div class="matches" <?php if($isLoggedIn):?> style="top: 200%; !important" <?php endif?>>
+                <div class="comments-container" style="background-color: rgb(106, 255, 138); text-align:center;">
+                    <h3 style="font-size: 3rem;"> LAST 5 MATCHES</h3>
+                </div>
                 <?php $cnt = 0; foreach( $matches as $id => $match):?>
                     <?php if($cnt === 5) break; ?>
-                    <div class="match-content" >
+                    <div class="match-content" style="border: 1px solid green;">
                         <div class="column">
                             <div class="team-de team--home">
                                 <div class="team-logo">
@@ -136,5 +142,8 @@ function decided($match) {return is_numeric($match['home']['score'])  && is_nume
         </div>
     </div>
     
+    <!-- Show More 5 maches -->
+
+    <!-- Show Maches of your liked teams! -->
 </body>
 </html>
