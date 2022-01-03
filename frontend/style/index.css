@@ -210,13 +210,14 @@ body {
 	box-shadow: 0 0 2px 0 rgba(#303030, 0.1), 0 4px 4px 0 rgba(#303030, 0.1);
   position: absolute;
   left: 35%;
+  top: 10%;
 }
 
 
 .match-content {
-	display: flex;
+	  display: flex;
     flex-direction: row;
-	position: relative;
+	  position: relative;
     border: 1px solid white;
     border-radius: 0.5rem;
     margin: 20px;
@@ -297,13 +298,12 @@ body {
 }
 
 .container {
-	position: absolute;
+	display: flex;
 	top: 0;
 	left: 0;
 	right: 0;
 	bottom: 0;
 	width: 100%;
-	display: flex;
   flex-wrap: wrap;
 	justify-content: center;
 	align-items: center;
@@ -579,4 +579,27 @@ textarea{
   box-sizing: border-box;
   font-size: 14px;
   font-family: 'Comfortaa', cursive;
+}
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *                                                                                                                 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*/
+/* MORE MATCHES BUTTON */
+.more-matches{
+  position: absolute;
+  top: 300%;
+  left: 20%;
+  margin-bottom: 50px;
+}
+
+.liked-teams-matches{
+  position: absolute;
+  top: 300%;
+  left: 65%;
+}
+.par-space{
+  float: left;
+  height: 3rem;
+  width: 3rem;
 }
