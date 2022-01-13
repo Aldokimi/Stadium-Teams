@@ -83,10 +83,10 @@ foreach($users as $u){
     </div>
     <div class="description">
         <h1>ELTE Stadium</h1>
-        <p>Welcon to <strong>The ELTE Stadium</strong> web page, 
+        <p>Welcom to <strong>The ELTE Stadium</strong> web page, 
             where the matches played at them will appear, 
-            and the fans are able to follow the 
-            results of their favorite teams, give comments to the teams and enjoy.</p>
+            and the fans are able to follow their favorite teams, 
+            give comments to the teams and enjoy.</p>
     </div>
 
     <!-- Teams -->
