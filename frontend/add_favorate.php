@@ -11,9 +11,12 @@ $user = $auth->authenticated_user();
 if($_GET){
     $teamID = $_GET['teamID'] ?? '';
     $userID = $_GET['userID'] ?? '';
-    if($teamID != '' && $userID){
-        $user['likedteams'][] = $teamID;
-        $userStorage->update($userID, $user);
+    echo $teamID;
+    echo '<br>';
+    echo $userID;
+    if($teamID != '' && $userID != ''){
+            $user['likedteams'][] = $teamID;
+            $userStorage->update($userID, $user);
     }
     header("Location: ./index.php", true, 301);
     exit();

@@ -41,9 +41,11 @@ if($_POST){
         if(isset($_SESSION['user'])){
             unset($_SESSION['user']);
         }
+        echo($data['username']);
+        echo '<br>';
         $user = $auth->authenticate($data['username'], $data['password']);
-        // print(var_dump(password_verify('admin', $userStorage->findById('61ce92585cd95')['password'])) );
-        // print(var_dump($user));
+        print(var_dump(password_verify('admin', $userStorage->findById('61ce92585cd95')['password'])) );
+        print(var_dump($user));
         if(!is_null($user)){
             $auth->login($user);
             header("Location: ./index.php", true, 301);

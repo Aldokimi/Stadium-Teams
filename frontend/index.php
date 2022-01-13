@@ -49,9 +49,19 @@ function isAdmin(){
 function home($match){ global $teamID; return $match['home']['id'] == $teamID ;} 
 function away($match){ global $teamID; return $match['away']['id'] == $teamID ;}
 function decided($match) {return is_numeric($match['home']['score'])  && is_numeric($match['away']['score']);}
+$liked = [];
+foreach ($teams as $id => $team) {
+    $liked[$id] = false;
+}
 
-$extraMatches = [];
-$moreMatches  = true;
+$users = $userStorage->findAll();
+$ulikedTeams = [];
+foreach($users as $u){
+    for ($i=0; $i < count($u['likedteams']); $i++) { 
+        $isdf = $u['likedteams'][$i].'s';
+        $ulikedTeams[$isdf][] = 1; 
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -61,48 +71,6 @@ $moreMatches  = true;
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style/index.css">
-        <style>
-        .more-matches{
-            position: absolute;
-            top: <?= $isLoggedIn ? '320%' : '300%'?>;
-            left: 20%;
-            margin-bottom: 50px;
-            width: 25%;
-        }
-
-        .liked-teams-matches{
-            position: absolute;
-            top: <?= $isLoggedIn ? '320%' : '300%'?>;
-            left: 69.3%;
-            margin-bottom: 50px;
-            width: 25%;
-        }
-        .par-space{
-            float: left;
-            height: 3rem;
-            width: 3rem;
-        }
-
-        .heart {
-            width: 100px;
-            height: 100px;
-            background: url("https://cssanimation.rocks/images/posts/steps/heart.png") no-repeat;
-            background-position: 0 0;
-            cursor: pointer;
-            transition: background-position 1s steps(28);
-            transition-duration: 0s;
-        }
-        .heart.is-active {
-            transition-duration: 1s;
-            background-position: -2800px 0;
-        }
-        .placement {
-            position:relative;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-    </style>
     <title>ELTE Stadium</title>
 </head>
 <body>
@@ -125,18 +93,26 @@ $moreMatches  = true;
     <div class="teams" style="grid-template-rows: <?php for($i=0;$i<$numberOfTeams;$i++):?><?="1fr"?> <?php endfor?>; 
             grid-template-columns: <?php for($i=0;$i<$numberOfTeams;$i++):?><?="1fr"?> <?php endfor?>;">
         <?php foreach($teams as $id => $team):?>
-            <?php if($isLoggedIn):?>
-                <div class="placement">
-                    <div class="heart" onclick="document.getElementsByClassName('.heart').toggleClass('is-active')"></div>
-                </div>
-            <?php endif?>
             <div class="team" onclick="location.href='./team_details.php?teadID=<?=$id?>';" style="padding: 1rem;"> 
                 <img src="<?=$team["logo"]?>" alt="<?=$team["name"]?>logo" style="width:100%">
                 <h4 style="padding: 0.3rem;"><b><?=$team["name"]?></b></h4>
-                <p style="padding: 0.3rem;"><?=$team["city"]?></p> 
-            </div>    
+                <p style="padding: 0.3rem;"><?=$team["city"]?></p>
+                
+            </div>  
         <?php endforeach?>
     </div>
+    <?php $cnt = 1; if($isLoggedIn):?>
+    <div class="add-team-fav" style="grid-template-rows: <?php for($i=0;$i<$numberOfTeams;$i++):?><?="1fr"?> <?php endfor?>; 
+            grid-template-columns: <?php for($i=0;$i<$numberOfTeams;$i++):?><?="1fr"?> <?php endfor?>;">
+        <?php foreach($teams as $id => $team):?>
+            <?php if(($key = array_search($id, $userStorage->findById($user['id'])['likedteams'])) === false):?>
+                <button class='add-to-favorate' id="seewho" onclick="location.href='./add_favorate.php?teamID=<?=$id?>&userID=<?=$user['id']?>';"> ADD TO FAVORATE</button>
+            <?php else:?>
+                <div class='add-to-favorate'><?= count($ulikedTeams[$cnt.'s'])?> users liked this team</div>
+            <?php endif?>
+        <?php $cnt++; endforeach;?>
+    </div>
+    <?php endif?>
 
     <!-- Last 5 matches -->
     <div class="last-5-matches">
@@ -185,73 +161,25 @@ $moreMatches  = true;
                         </div>
                     </div>
                 <?php $cnt++; endforeach?>
+                <div id="more-matches-output"></div>
+                <?php if($isLoggedIn):?>
+                    <!-- Show More 5 maches -->
+                    <button id="seewho" class="more-matches">SHOW MORE MATCHES</button>
+                <?php endif?>
             </div>
         </div>
     </div>
+    <!-- Show all matches -->
+    <div class="show-all" onclick="location.href='./show_matches.php?type=all';"> 
+        <Button id="seewho" class="more-matches">SHOW ALL MATCHES</Button>  
+    </div>
     <?php if($isLoggedIn):?>
-        <!-- Show More 5 maches -->
-        <button id="seewho" class="more-matches">SHOW MORE MATCHES</button>
-        <!-- Show Maches of your liked teams! -->
-        <Button id="seewho2" class="liked-teams-matches">SHOW MATCHES FOR LIKED TEAMS</Button>
-        <script>
-            document.querySelector('.more-matches').addEventListener('click', onClick)
-            function onClick(e) {
-                console.log(1);
-                const xhr = new XMLHttpRequest()
-                xhr.open('get', 'ajax.php?type=more')
-                xhr.addEventListener('load', function () { console.log(this.response) })
-                xhr.responseType = 'json'
-                xhr.send(null);
-            }
-        </script>
-        <!-- Display the extra matches -->
-        <div class="container">
-            <div class="matches" style="top: 350% !important; left: 20% !important">
-                <div class="comments-container" style="background-color: rgb(106, 255, 138); text-align:center;">
-                    <h3 style="font-size: 3rem;"> <?= $moreMatches ? 'MORE 5 MATCHES' : 'LIKED TEAMS MATCHES'?></h3>
-                </div>
-                <?php foreach( $extraMatches as $id => $match):?>
-                    <div class="match-content" style="border: 1px solid green;">
-                        <div class="column">
-                            <div class="team-de team--home">
-                                <div class="team-logo">
-                                    <img src="<?= $teams[$match['home']['id']]['logo']?>" />
-                                </div>
-                                <h2 class="team-name"><?= getTeamName($match['home']['id'])?></h2>
-                            </div>
-                        </div>
-                        <div class="column">
-                            <div class="match-details">
-                                <div class="match-date">
-                                    <?=$match['date']?>
-                                </div>
-                                <div class="match-score">
-                                    <?php if(decided($match)):?>
-                                        home <span class="match-score-number match-score-number--leading"><?=$match['home']['score']?></span>
-                                        <span class="match-score-divider">:</span>
-                                        <span class="match-score-number"><?=$match['away']['score']?></span> away
-                                    <?php else:?>
-                                        home <span class="match-score-number match-score-number--leading">◻</span>
-                                        <span class="match-score-divider">:</span>
-                                        <span class="match-score-number">◻</span> away
-                                    <?php endif?>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="column">
-                            <div class="team-de team--away">
-                                <div class="team-logo">
-                                    <img src="<?= $teams[$match['away']['id']]['logo']?>" />
-                                </div>
-                                <h2 class="team-name"><?=getTeamName($match['away']['id'])?> </h2>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach?>
-            </div>
-        </div>
+        <!-- Show favorate teams matches -->
+        <div class="show-fav"> 
+            <Button id="seewho" class="liked-teams-matches">SHOW FAVORATE TEAMS MATCHES</Button>  
+        </div>  
     <?php endif?>
 
-    <div class="par-space"></div>
+    <script type="module" src="js/index.js"></script>
 </body>
 </html>

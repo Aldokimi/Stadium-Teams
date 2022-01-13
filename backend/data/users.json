@@ -8,7 +8,8 @@
         ],
         "likedteams": [
             "1",
-            "2"
+            "2",
+            "7"
         ],
         "id": "61ce92585cd95"
     },
@@ -21,5 +22,17 @@
         ],
         "likedteams": [],
         "id": "61cea0f383e55"
+    },
+    "61e082340cffd": {
+        "username": "someone",
+        "email": "someone@email.com",
+        "password": "$2y$10$r0raRymCh50BznBu3hKreuyT8ygFXMnrk17zAb5nMihFOa1uH6Boe",
+        "roles": [
+            "user"
+        ],
+        "likedteams": [
+            "1"
+        ],
+        "id": "61e082340cffd"
     }
 }

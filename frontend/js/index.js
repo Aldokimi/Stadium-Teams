@@ -1,70 +1,99 @@
-let table = document.querySelector("#given-dates");
-let month = document.getElementById("month_header");
-let search_month = document.getElementById("search-month");
-let search_btn = document.getElementById("search-btn");
-let next_mnth = document.getElementById("next-month");
-let prev_mnth = document.getElementById("prev-month");
+// show more matches button
+const moreMaches = document.querySelector('.more-matches');
+moreMaches.addEventListener('click', (e)=>{
+    const xhr = new XMLHttpRequest();
+    xhr.open('get', 'ajax.php?type=more');
+    xhr.addEventListener('load', function () { 
+        document.querySelector('#more-matches-output').innerHTML = listMoreMatches(this.response, [...teams][0]);
+    });
+    xhr.responseType = 'json';
+    xhr.send(null);
+    moreMaches.style.display = "none";
+});
 
+const favMatches = document.querySelector('.liked-teams-matches');
+let favMatchesOutput = [];
+favMatches.addEventListener('click', (e)=>{
+    location.href='./show_matches.php?type=fav' ;
+    // const xhr = new XMLHttpRequest();
+    // xhr.open('get', 'ajax.php?type=fav');
+    // xhr.addEventListener('load', function () { 
+    //     const matches = listMoreMatches(this.response, [...teams][0]);
+    // });
+    // xhr.responseType = 'json';
+    // xhr.send(null);
+});
 
-let mnth = 1;
-let year = 2021;
+// helper functions 
+let data = [];
+export function getTeams(){
+    getRandomUser()
+    return data;
+}
+async function getRandomUser(){
+  const response = await fetch('./../backend/data/teams.json');
+  data.push(await response.json());
+}
+export const favMatchesO = ()=> {return favMatchesOutput}; 
 
-//Events area ======================================================
-window.onload = (e) => {
-    updateAppointments(mnth,year);
+const teams = getTeams();
+
+function getTeamName(id, teams){
+    for(let teamId in teams){
+        if(teams[teamId]['id'] == id) return teams[teamId]['name'];
+    } 
+}
+function decided(match){
+    return isFinite(1) && !isNaN(parseFloat(match['home']['score'])) && isFinite(1) && !isNaN(parseFloat(match['away']['score']));
 }
 
-search_btn.addEventListener("click" , (e) => {
-    let data = search_month.value.split("-");
-    mnth = parseInt(data[1]);
-    year = parseInt(data[0]);
-    updateAppointments( mnth, year );
-});
-
-next_mnth.addEventListener("click" , (e) => {
-    if ( ++mnth > 12){
-        year++;
-        mnth = 1;
-    }
-    updateAppointments( mnth, year );
-});
-prev_mnth.addEventListener("click" , (e) => {
-    if ( --mnth <= 0){
-        year--;
-        mnth = 12;
-    }
-    updateAppointments( mnth, year );
-});
-
-//Functions Area ====================================================
-
-function updateAppointments( mn , yr){
-    switch(mn){
-        case 1: month.innerHTML = "Jan " + year; break; 
-        case 2: month.innerHTML = "Feb " + year; break; 
-        case 3: month.innerHTML = "Mar " + year; break; 
-        case 4: month.innerHTML = "Apr " + year; break; 
-        case 5: month.innerHTML = "May " + year; break; 
-        case 6: month.innerHTML = "Jun " + year; break; 
-        case 7: month.innerHTML = "Jul " + year; break; 
-        case 8: month.innerHTML = "Aug " + year; break; 
-        case 9: month.innerHTML = "Sep " + year; break; 
-        case 10: month.innerHTML = "Oct " + year; break; 
-        case 11: month.innerHTML = "Nov " + year; break; 
-        case 12: month.innerHTML = "Dec " + year; break; 
-        default: month.innerHTML = "no"; break; 
-    }
-        
-    let text = "";
-    let xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            text = this.responseText;
-            if(text.indexOf("ERROR") == -1){
-                table.innerHTML = text;
-            }
-        }
+export function listMoreMatches(matches, teams){
+    let output = '';
+    for(var i = 0; i < matches.length; i++){
+        let match = matches[i];
+        console.log(match["away"]["id"]);
+        output +=`<div class="match-content" style="border: 1px solid green;">
+            <div class="column">
+                <div class="team-de team--home">
+                    <div class="team-logo">
+                        <img src="` + teams[match["home"]["id"]]["logo"] + `" />
+                    </div>
+                    <h2 class="team-name">` +  getTeamName(match["home"]["id"], teams)  + `</h2>
+                </div>
+            </div>
+            <div class="column">
+                <div class="match-details">
+                    <div class="match-date">
+                        ` + match["date"] + `
+                    </div>
+                    <div class="match-score">`;
+                        if(decided(match)){
+                            output +=`
+                            home <span class="match-score-number match-score-number--leading">` + match["home"]["score"] + `</span>
+                            <span class="match-score-divider">:</span>
+                            <span class="match-score-number">` +  match["away"]["score"] + `</span> away
+                            `;
+                        } else{
+                            output +=`
+                            home <span class="match-score-number match-score-number--leading">◻</span>
+                            <span class="match-score-divider">:</span>
+                            <span class="match-score-number">◻</span> away
+                            `;
+                        }
+                        output += `
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="team-de team--away">
+                    <div class="team-logo">
+                        <img src="` + teams[match["away"]["id"]]["logo"] +`" />
+                    </div>
+                    <h2 class="team-name">`+ getTeamName(match["away"]["id"], teams) + ` </h2>
+                </div>
+            </div>
+        </div>
+        `;
     };
-    xhr.open("GET", "time_data.php?mn="+ mn +"&yr="+yr, true);
-    xhr.send();
+    return output;
 }
