@@ -1,4 +1,4 @@
-# ELTE-Stadium-Teams
+# Stadium-Teams
 
 A website that shows teams and there matches with the applitiy to like and comment on maches and team + other features.
 
